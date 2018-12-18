@@ -1,7 +1,9 @@
 import java.text.DateFormatSymbols
+import com.co.devco.DateUtils
 
 def call(String deployDay, List<Map.Entry<String, String>> timeRangesList,String resourceName){
     milestone()
+    DateUtils DATE_UTILS = new DateUtils()
     lock(resource: resourceName, inversePrecedence: true) {
         Date date = new Date()
         Calendar cal = Calendar.getInstance()
@@ -30,8 +32,8 @@ def call(String deployDay, List<Map.Entry<String, String>> timeRangesList,String
         echo "Actual day: $dayOfMonthStr"
 
         while (dayOfMonthStr != deployDay || !(isTimeBetweenTimeRangesList(timeRangesList, currentTime))) {
-            String nextStartTime = getNextStartTime(timeRangesList, currentTime)
-            Long secondsToSleep = secondsToNextInputDay(deployDay, nextStartTime)
+            String nextStartTime = DATE_UTILS.getNextStartTime(timeRangesList, currentTime)
+            Long secondsToSleep = DATE_UTILS.secondsToNextInputDay(deployDay, nextStartTime)
             sleep secondsToSleep
             date = new Date()
             cal.setTime(date)
