@@ -1,0 +1,17 @@
+.gradle
+target
+build
+out
+*.DS_Store
+*~
+*.iml
+*.ipr
+*.iws
+.idea
+.*.swp
+*.class
+/bin
+user.gradle
+/.settings
+*.classpath
+*.project
