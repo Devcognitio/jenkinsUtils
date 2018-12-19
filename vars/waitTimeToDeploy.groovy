@@ -4,6 +4,7 @@ import com.co.devco.DateUtils
 def call(String deployDay, List<Map.Entry<String, String>> timeRangesList,String resourceName){
     milestone()
     DateUtils DATE_UTILS = new DateUtils()
+    DateValidator DATE_VALIDATOR = new DateValidator()
     lock(resource: resourceName, inversePrecedence: true) {
         Date date = new Date()
         Calendar cal = Calendar.getInstance()
@@ -31,7 +32,7 @@ def call(String deployDay, List<Map.Entry<String, String>> timeRangesList,String
         echo "Actual time: $currentTime"
         echo "Actual day: $dayOfMonthStr"
 
-        while (dayOfMonthStr != deployDay || !(isTimeBetweenTimeRangesList(timeRangesList, currentTime))) {
+        while (dayOfMonthStr != deployDay || !(DATE_VALIDATOR.isTimeBetweenTimeRangesList(timeRangesList, currentTime))) {
             String nextStartTime = DATE_UTILS.getNextStartTime(timeRangesList, currentTime)
             Long secondsToSleep = DATE_UTILS.secondsToNextInputDay(deployDay, nextStartTime)
             sleep secondsToSleep
