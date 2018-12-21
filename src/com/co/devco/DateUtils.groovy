@@ -4,11 +4,15 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.DayOfWeek
 import java.time.LocalTime
+import groovy.time.*
 import java.time.temporal.ChronoUnit
-
+import java.text.DateFormatSymbols
+import java.time.format.DateTimeFormatter
 import static java.time.temporal.TemporalAdjusters.nextOrSame
 
 class DateUtils {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+
     Long secondsToNextInputDay(String day, String initialTime, LocalDate today = LocalDate.now(), LocalTime actualTime = LocalTime.now()){
         day = day.toUpperCase()
         int dayToday = today.getDayOfWeek().getValue()
@@ -59,5 +63,61 @@ class DateUtils {
             }
         }
         return nextStartTime
+    }
+
+    String getCurrentTimeStr(){
+        Date date = new Date()
+        Calendar cal = Calendar.getInstance()
+        cal.setTime(date)
+
+        int hour = cal.get(Calendar.HOUR_OF_DAY)
+        int minute = cal.get(Calendar.MINUTE)
+        int second = cal.get(Calendar.SECOND)
+
+        String hourString = (hour<10?("0"+hour):(hour))
+        String minuteString = (minute<10?("0"+minute):(minute))
+        String secondString = (second<10?("0"+second):(second))
+
+        String currentTimeStr = "$hourString:$minuteString:$secondString"
+
+        return currentTimeStr
+    }
+
+    String getTodayOfMonthStr(){
+        Date date = new Date()
+        Calendar cal = Calendar.getInstance()
+        cal.setTime(date)
+
+        int day = cal.get(Calendar.DAY_OF_WEEK)
+        DateFormatSymbols symbols = new DateFormatSymbols(Locale.ENGLISH)
+        String dayOfMonthStr = symbols.getWeekdays()[day]
+        
+        return dayOfMonthStr.toLowerCase()
+    }
+
+    List<String> transformStringToListString(String days){
+        if (days?.trim()){
+            List<String> resp = days.split(',')
+            return resp.collect{element -> element.trim()}
+        }else {
+            return []
+        }
+    }
+
+    List<Map.Entry<String, String>> transformTimesListTotimeRanges(List<String> times){
+        List<Map.Entry<String, String>> timeRanges = new ArrayList()
+        times.each{element -> 
+            String timePlus20Mins = this.getTimePlus20Mins(element)
+            timeRanges.add( new AbstractMap.SimpleEntry<String, String>(element, timePlus20Mins) )
+        }
+
+        return timeRanges
+    }
+
+    String getTimePlus20Mins(String timeStr){
+        LocalTime time = LocalTime.parse( timeStr )
+        LocalTime timePlus20Mins = time.plusMinutes(20)
+        String timePlus20MinsStr = timePlus20Mins.format(formatter)
+        return timePlus20MinsStr
     }
 }

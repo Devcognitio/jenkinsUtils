@@ -1,12 +1,11 @@
 package com.co.devco
 
 import org.junit.Test
-
 import java.time.LocalDate
 import java.time.LocalTime
-
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
+import static org.hamcrest.text.MatchesPattern.*
 
 class DateUtilsTest {
 
@@ -204,4 +203,89 @@ class DateUtilsTest {
 
         assertThat(nextStartTime, is("23:20:00"))
     }
+
+    @Test
+    void transformStringToListStringShouldReturnACorrectListWhenDaysHaveData(){
+        String days = 'monday, saturday,friday'
+        List<String> resp = dateUtils.transformStringToListString( days )
+        assertThat(resp, hasSize(3))
+        assertThat(resp, containsInAnyOrder('monday', 'saturday', 'friday'))
+    }
+
+    @Test
+    void transformStringToListStringShouldReturnACorrectListWhenDaysHaveTimeData(){
+        String days = '12:00:00, 08:00:00, 13:20:01'
+        List<String> resp = dateUtils.transformStringToListString( days )
+        assertThat(resp, hasSize(3))
+        assertThat(resp, containsInAnyOrder('08:00:00', '12:00:00', '13:20:01'))
+    }
+
+    @Test
+    void transformStringToListStringShouldReturnAnEmptyListWhenDaysHaveNotData(){
+        String days = ''
+        List<String> resp = dateUtils.transformStringToListString( days )
+        assertThat(resp, empty())
+    }
+
+    @Test
+    void transformStringToListStringShouldReturnAnEmptyListWhenDaysHaveSpaces(){
+        String days = '   '
+        List<String> resp = dateUtils.transformStringToListString( days )
+        assertThat(resp, empty())
+    }
+
+    @Test
+    void getCurrentTimeStrShouldReturnATimeWithCorrectFormat(){        
+        String resp = dateUtils.getCurrentTimeStr()
+        assertThat(resp.length(), is(8))
+        assertThat(resp, matchesPattern("\\d{2}:\\d{2}:\\d{2}"))
+    }
+
+    @Test
+    void getTodayOfMonthStrShouldReturnADayInEnglish(){
+        def days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+        String resp = dateUtils.getTodayOfMonthStr()
+        assertThat(resp, isIn(days))
+    }
+
+    @Test
+    void getTimePlus20MinsShouldReturn12Plus20MinsWhenTimeIs12(){
+        String time = "12:00:00"
+        String resp = dateUtils.getTimePlus20Mins(time)
+        assertThat(resp, is("12:20:00"))
+    }
+
+    @Test
+    void getTimePlus20MinsShouldReturn00Plus20MinsWhenTimeIs00(){
+        String time = "00:00:00"
+        String resp = dateUtils.getTimePlus20Mins(time)
+        assertThat(resp, is("00:20:00"))
+    }
+
+    @Test
+    void getTimePlus20MinsShouldReturn00Plus19MinsWhenTimeIs235900(){
+        String time = "23:59:00"
+        String resp = dateUtils.getTimePlus20Mins(time)
+        assertThat(resp, is("00:19:00"))
+    }
+
+    @Test
+    void transformTimesListTotimeRangesShouldReturnARangePlus20MinsForEveryElementInTimes(){
+        List<String> times = ['12:00:00', '20:50:03']
+        List<Map.Entry<String, String>> expectedTimes = new ArrayList()
+        expectedTimes.add(new AbstractMap.SimpleEntry<String, String>("12:00:00", "12:20:00"))
+        expectedTimes.add(new AbstractMap.SimpleEntry<String, String>("20:50:03", "21:10:03"))
+
+        List<Map.Entry<String, String>> resp = dateUtils.transformTimesListTotimeRanges(times)
+        
+        assertThat(resp, equalTo(expectedTimes))
+    }
+
+    @Test
+    void transformTimesListTotimeRangesShouldReturnAnEmptyListIfTimesIsEmpty(){
+        List<String> times = []
+        List<Map.Entry<String, String>> resp = dateUtils.transformTimesListTotimeRanges(times)        
+        assertThat(resp, empty())
+    }
+    
 }
