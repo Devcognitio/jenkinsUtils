@@ -122,7 +122,7 @@ def call(body) {
                 }
             }
 
-            stage('input') {
+            /*stage('input') {
                 agent none
                 options {
                     timeout(time: 1, unit: 'HOURS')
@@ -130,7 +130,7 @@ def call(body) {
                 steps{
                     input 'Desea realizar la promoción al siguiente ambiente?'
                 }
-            }
+            }*/
 
             stage('git promotion'){
                 when{
