@@ -12,7 +12,7 @@ def call(body) {
         environment {
             ARTIFACTORY_SERVER = 'DEVOPS-ARTIFACTORY'
             
-            ARTIFACT_NAME = "${pipelineParams.artifact.name}"
+            ARTIFACT_NAME = "${pipelineParams.artifact.get('name')}"
         }
 
         stages {
@@ -25,7 +25,7 @@ def call(body) {
                 }
                 post{
                     success {
-                        archiveArtifacts artifacts: "${pipelineParams.artifact.path}/*.${pipelineParams.artifact.name}", fingerprint: true
+                        archiveArtifacts artifacts: "${pipelineParams.artifact.get('path')}/*.${pipelineParams.artifact.get('name')}", fingerprint: true
                     }
                 }
             }
@@ -81,8 +81,8 @@ def call(body) {
                     anyOf { branch 'develop'; branch 'release'; branch 'master' }
                 }
                 environment {
-                    EXECUTE_INTEGRATION_TEST = "${env.BRANCH_NAME == "develop" ? pipelineParams.integrationTest.executeDllo : pipelineParams..integrationTest.executeQa}"
-                    EXECUTE_E2E_TEST = "${env.BRANCH_NAME == "develop" ? pipelineParams.e2eTest.executeDllo : pipelineParams..e2eTest.executeQa}"
+                    EXECUTE_INTEGRATION_TEST = "${env.BRANCH_NAME == "develop" ? pipelineParams.integrationTest.get('executeDllo') : pipelineParams.integrationTest.get('executeQa')}"
+                    EXECUTE_E2E_TEST = "${env.BRANCH_NAME == "develop" ? pipelineParams.e2eTest.get('executeDllo') : pipelineParams.e2eTest.get('executeQa')}"
                 }
                 parallel{
                     stage('postman test') {
@@ -116,13 +116,13 @@ def call(body) {
                 }
                 steps {
                     script{
-                        String artifactoryPath= artifactory.getStage(env.BRANCH_NAME, pipelineParams.artifact.repo_name)
-                        artifactory.push(env.ARTIFACTORY_SERVER, pipelineParams.artifactPath, artifactoryPath)
+                        String artifactoryPath= artifactory.getStage(env.BRANCH_NAME, pipelineParams.artifact.get('repo_name'))
+                        artifactory.push(env.ARTIFACTORY_SERVER, pipelineParams.artifact.get('name'), artifactoryPath)
                     }
                 }
             }
 
-            /*stage('input') {
+            stage('input') {
                 agent none
                 options {
                     timeout(time: 1, unit: 'HOURS')
@@ -130,7 +130,7 @@ def call(body) {
                 steps{
                     input 'Desea realizar la promoción al siguiente ambiente?'
                 }
-            }*/
+            }
 
             stage('git promotion'){
                 when{
