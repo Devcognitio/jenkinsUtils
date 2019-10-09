@@ -12,7 +12,8 @@ out
 *.class
 /bin
 user.gradle
-/.settings
+.settings/
 *.classpath
 *.project
 .vscode/
+.classpath
