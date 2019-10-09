@@ -20,7 +20,7 @@ def call(body) {
             stage('build') {
                 steps {
                     echo "CommitHash: ${env.GIT_COMMIT}"
-                    sh "git branch tmp-promotion-${POM_VERSION} ${env.GIT_COMMIT}"
+                    sh "git branch tmp-promotion-${GIT_COMMIT} ${env.GIT_COMMIT}"
                     sh './gradlew clean package -DskipTests=true'
                 }
                 post{
@@ -144,7 +144,7 @@ def call(body) {
                             sh 'git status'
                             sh 'git fetch'
                             sh 'git checkout origin/release'
-                            sh "git merge tmp-promotion-${POM_VERSION}"
+                            sh "git merge tmp-promotion-${GIT_COMMIT}"
                             withCredentials([usernamePassword(credentialsId: 'GitHub-Devco-Repos', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                                 sh("git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${env.GIT_URL.substring(8)} HEAD:release")
                             }
@@ -154,7 +154,7 @@ def call(body) {
                             sh 'git status'
                             sh 'git fetch'
                             sh 'git checkout origin/master'
-                            sh "git merge tmp-promotion-${POM_VERSION}"
+                            sh "git merge tmp-promotion-${GIT_COMMIT}"
                             withCredentials([usernamePassword(credentialsId: 'GitHub-Devco-Repos', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                                 sh("git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${env.GIT_URL.substring(8)} HEAD:master")
                             }
@@ -175,7 +175,7 @@ def call(body) {
             }
             always{
                 echo "Borrando branch temporal"
-                sh "git branch -d tmp-promotion-${POM_VERSION}"
+                sh "git branch -d tmp-promotion-${GIT_COMMIT}"
             }
         }
     }
