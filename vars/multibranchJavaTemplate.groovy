@@ -124,10 +124,11 @@ def call(body) {
 
             stage('input') {
                 agent none
+                options {
+                    timeout(time: 1, unit: 'HOURS')
+                }
                 steps{
-                    timeout(time: 1, units: 'HOURS') {
-                        input 'Desea realizar la promoción al siguiente ambiente?'
-                    }
+                    input 'Desea realizar la promoción al siguiente ambiente?'
                 }
             }
 
