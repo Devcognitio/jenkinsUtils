@@ -21,7 +21,7 @@ def call(body) {
                 steps {
                     echo "CommitHash: ${env.GIT_COMMIT}"
                     sh "git branch tmp-promotion-${GIT_COMMIT} ${env.GIT_COMMIT}"
-                    sh './gradlew clean package -DskipTests=true'
+                    sh './gradlew clean build -DskipTests=true'
                 }
                 post{
                     success {
