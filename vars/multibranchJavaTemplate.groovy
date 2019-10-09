@@ -25,7 +25,7 @@ def call(body) {
                 }
                 post{
                     success {
-                        archiveArtifacts artifacts: "${pipelineParams.artifact.get('path')}/*.${pipelineParams.artifact.get('name')}", fingerprint: true
+                        archiveArtifacts artifacts: "${pipelineParams.artifact.get('path')}/${pipelineParams.artifact.get('name')}", fingerprint: true
                     }
                 }
             }
