@@ -67,7 +67,7 @@ def call(body) {
 
             stage('post deploy test'){
                 when{
-                    anyOf { branch 'develop'; branch 'release'; branch 'master' }
+                    anyOf { branch 'develop'; branch 'release' }
                 }
                 environment {
                     EXECUTE_INTEGRATION_TEST = "${env.BRANCH_NAME == "develop" ? pipelineParams.integrationTest.get('executeDllo') : pipelineParams.integrationTest.get('executeQa')}"
@@ -109,6 +109,9 @@ def call(body) {
             }
 
             stage('input') {
+                when{
+                    anyOf { branch 'develop'; branch 'release' }
+                }
                 agent none
                 options {
                     timeout(time: 1, unit: 'HOURS')
@@ -120,7 +123,7 @@ def call(body) {
 
             stage('git promotion'){
                 when{
-                    anyOf { branch 'develop'; branch 'release'; branch 'master' }
+                    anyOf { branch 'develop'; branch 'release' }
                 }
                 steps{
                     script{
