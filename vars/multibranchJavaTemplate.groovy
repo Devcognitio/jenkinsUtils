@@ -104,10 +104,7 @@ def call(body) {
                     anyOf { branch 'develop'; branch 'release'; branch 'master' }
                 }
                 steps {
-                    script{
-                        String artifactoryPath= artifactory.getStage(env.BRANCH_NAME, pipelineParams.artifact.get('repo_name'))
-                        artifactory.push(env.ARTIFACTORY_SERVER, pipelineParams.artifact.get('name'), artifactoryPath)
-                    }
+                    echo "PUSH ARTIFAcT en: ${env.ENVIRONMENT} para ${env.ARTIFACT_NAME}"
                 }
             }
 
