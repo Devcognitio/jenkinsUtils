@@ -121,6 +121,20 @@ def call(body) {
                 }
             }
 
+            // Paso por control SOX
+            stage('Business Approval') {
+                when{
+                    anyOf { branch 'develop'; branch 'release' }
+                }
+                agent none
+                options {
+                    timeout(time: 1, unit: 'HOURS')
+                }
+                steps{
+                    input 'Desea realizar la promoción al siguiente ambiente?'
+                }
+            }
+
             stage('git promotion'){
                 when{
                     anyOf { branch 'develop'; branch 'release' }
